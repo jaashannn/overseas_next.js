@@ -5,10 +5,11 @@ import Destination from "./Destination/Destination";
 import Hotel from "./Hotel/Hotel";
 import WhyChoose from "./WhyChoose/WhyChoose";
 import Review from "./Reviews/Review";
-import News from "./News/News";
-import Newsletter from "./Newsletter/Newsletter";
+// import News from "./News/News";
+// import Newsletter from "./Newsletter/Newsletter";
 import AOS from "aos";
 import "aos/dist/aos.css"; // You can also use <link> for styles
+import HotDeals from "./HotDeals/HotDeals";
 
 const Home = () => {
   useEffect(() => {
@@ -27,12 +28,13 @@ const Home = () => {
   return (
     <div className="overflow-hidden ">
       <Hero />
+      <HotDeals />
       <Destination />
       <Hotel />
       <WhyChoose />
       <Review />
-      <News />
-      <Newsletter />
+      {/* <News />
+      <Newsletter /> */}
     </div>
   );
 };
