@@ -23,6 +23,8 @@ type FormData = {
   role: string;
   numberOfAgents: string;
   agencyType: string;
+  ticoOrIataCertified: string; // Added
+  planPurchased: string[]; // Added
 };
 
 type ApiError = {
@@ -55,6 +57,8 @@ export default function BecomeAnAgentPage() {
     role: 'agent',
     numberOfAgents: '',
     agencyType: '',
+    ticoOrIataCertified: '', // Added
+    planPurchased: [], // Added
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -349,6 +353,20 @@ export default function BecomeAnAgentPage() {
                     onChange={handleChange}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="ticoOrIataCertified" className="block text-sm font-medium text-gray-700">
+                    TICO/IATA Certified
+                  </label>
+                  <input
+                    type="text"
+                    id="ticoOrIataCertified"
+                    name="ticoOrIataCertified"
+                    value={formData.ticoOrIataCertified}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     disabled={isLoading}
                   />
                 </div>

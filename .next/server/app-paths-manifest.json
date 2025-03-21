@@ -1,1 +1,14 @@
-{}
+{
+  "/page": "app/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/api/auth/hotdeals/route": "app/api/auth/hotdeals/route.js",
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/api/auth/login/route": "app/api/auth/login/route.js",
+  "/agent/page": "app/agent/page.js",
+  "/agent/flights/page": "app/agent/flights/page.js",
+  "/becomeagent/page": "app/becomeagent/page.js",
+  "/booknow/page": "app/booknow/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/auth/booknow/route": "app/api/auth/booknow/route.js",
+  "/api/auth/becomeanagent/route": "app/api/auth/becomeanagent/route.js"
+}

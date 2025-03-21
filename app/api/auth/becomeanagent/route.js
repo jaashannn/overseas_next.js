@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '../../../lib/mongodb';
 import Agent from '../../../models/Agent'; // Ensure this model exists
 import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
+import { sendEmail } from '../../../lib/mailer'; // Import the mailer utility
 
 export async function POST(request) {
   await dbConnect();
@@ -24,8 +25,8 @@ export async function POST(request) {
     role,
     numberOfAgents,
     agencyType,
+    ticoOrIataCertified
   } = await request.json();
-
 
   try {
     // Check if agent already exists
@@ -57,9 +58,21 @@ export async function POST(request) {
       role,
       numberOfAgents,
       agencyType,
+      ticoOrIataCertified
     });
 
     await agent.save();
+
+    // Send email to the user
+    const userSubject = 'Thank you for signing up as an agent!';
+    const userText = `Dear ${name},\n\nThank you for signing up as an agent with us. We will review your application and get back to you shortly.\n\nBest regards,\nYour Company`;
+    await sendEmail(email, userSubject, userText);
+
+    // Send email to the admin
+    const adminEmail = process.env.ADMIN_EMAIL; // Admin email address
+    const adminSubject = 'New Agent Signup';
+    const adminText = `A new agent has signed up:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phoneNumber}\nCountry: ${country}\nAgency Type: ${agencyType}`;
+    await sendEmail(adminEmail, adminSubject, adminText);
 
     // Respond with success
     return NextResponse.json({ message: 'Agent created successfully', agent }, { status: 201 });
