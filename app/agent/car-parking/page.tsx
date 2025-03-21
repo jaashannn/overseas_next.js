@@ -1,0 +1,41 @@
+import { carparkingData } from "@/data/data";
+
+export default function CarParkingPage() {
+  const { consolidators } = carparkingData;
+
+  return (
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Car Parking Consolidators</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {consolidators.map((consolidator, index) => (
+          <div
+            key={index}
+            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+          >
+            <h2 className="text-xl font-semibold mb-4">{consolidator.title}</h2>
+            <div className="space-y-2">
+              {consolidator.link && (
+                <a
+                  href={consolidator.link}
+                  className="block text-blue-600 hover:underline"
+                >
+                  Visit Link
+                </a>
+              )}
+              {consolidator.site && (
+                <a
+                  href={consolidator.site}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-blue-600 hover:underline"
+                >
+                  Visit Site
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

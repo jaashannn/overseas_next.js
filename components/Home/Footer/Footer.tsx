@@ -66,16 +66,24 @@ const Footer = () => {
         {/* 4th part */}
         <div>
           <h1 className="text-lg font-bold">Contact Us</h1>
-          <div className="mt-6">
+          <div className="mt-3">
             <h1 className="text-sm text-gray-600">Our Mobile Number</h1>
             <h1 className="text-base font-bold text-blue-950 mt-1">
-              +012 345 6788
+              1-855-553-2720
             </h1>
           </div>
-          <div className="mt-6">
-            <h1 className="text-sm text-gray-600">Our Email</h1>
+          <div className="mt-3">
+            <h1 className="text-sm text-gray-600">Email</h1>
             <h1 className="text-base font-bold text-blue-950 mt-1">
-              example@gmail.com
+              tickets@overseastravels.net
+            </h1>
+          </div>
+          <div className="mt-3">
+            <h1 className="text-sm text-gray-600">Address</h1>
+            <h1 className="text-base font-bold text-blue-950 mt-1">
+              9166 34A Ave NW,
+              Edmonton, AB, T6E5P5.
+            
             </h1>
           </div>
         </div>
@@ -83,7 +91,7 @@ const Footer = () => {
       {/* Bottom section */}
       <div className="mt-8 w-[80%] mx-auto border-t pt-8 flex flex-col md:flex-row justify-between items-center text-gray-600 text-sm">
         <p className="text-center md:text-left">
-          Copyright © 2024 Webdev. All rights reserved
+          Copyright © 2025 VirtualTechMaster. All rights reserved
         </p>
         <div className="flex items-center space-x-4 mt-4 md:mt-0">
           <span>Social : </span>

@@ -1,32 +1,32 @@
 export const navLinks = [
   {
     id: 1,
-    url: "#",
+    url: "/",
     label: "Home",
   },
   {
     id: 2,
-    url: "#",
+    url: "/about",
     label: "About",
   },
   {
     id: 3,
-    url: "#",
-    label: "Destination",
+    url: "/insurance",
+    label: "insurance",
   },
   {
     id: 4,
-    url: "#",
-    label: "Blog",
+    url: "/becomeagent",
+    label: "Become an Agent",
   },
-  {
-    id: 5,
-    url: "#",
-    label: "Dashboard",
-  },
-  {
-    id: 6,
-    url: "#",
-    label: "Contact",
-  },
-];
+  // {
+  //   id: 5,
+  //   url: "/login",
+  //   label: "Login",
+  // },
+  // {
+  //   id: 6,
+  //   url: "/signup",
+  //   label: "SignUp",
+  // },
+]; 
