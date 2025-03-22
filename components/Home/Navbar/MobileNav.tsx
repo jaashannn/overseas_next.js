@@ -2,9 +2,10 @@
 
 import { navLinks } from "@/constant/constant";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { CgClose } from "react-icons/cg";
 import { FaUserCircle, FaUserTie } from "react-icons/fa"; // Import icons for agent and admin
+import { useAuth } from "@/app/context/AuthContext"; // Import useAuth
 
 type Props = {
   showNav: boolean;
@@ -12,26 +13,7 @@ type Props = {
 };
 
 const MobileNav = ({ closeNav, showNav }: Props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
-  const [userRole, setUserRole] = useState(""); // Track user role
-
-  // Check login status and role on component mount
-  useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    const role = localStorage.getItem("role") || "";
-    setIsLoggedIn(loggedIn);
-    setUserRole(role);
-  }, []);
-
-  // Handle logout
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
-    setIsLoggedIn(false);
-    setUserRole("");
-    window.location.href = "/login"; // Redirect to login page
-  };
+  const { isLoggedIn, userRole, logout } = useAuth(); // Use useAuth
 
   // Handle agent icon click
   const handleAgentIconClick = () => {
@@ -116,7 +98,7 @@ const MobileNav = ({ closeNav, showNav }: Props) => {
               </div>
             )}
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="text-white w-fit text-[20px] ml-12 border-b-[1.5px] pb-1 border-white sm:text-[30px] hover:text-yellow-300 transition-all duration-200"
             >
               Logout

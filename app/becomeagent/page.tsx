@@ -1,9 +1,10 @@
-'use client'; // Mark this as a Client Component
+'use client';
 
 import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
+import { useAuth } from '@/app/context/AuthContext'; // Import useAuth
 
 type FormData = {
   title: string;
@@ -23,6 +24,8 @@ type FormData = {
   role: string;
   numberOfAgents: string;
   agencyType: string;
+  ticoOrIataCertified: string; // Added
+  planPurchased: string[]; // Added
 };
 
 type ApiError = {
@@ -55,8 +58,13 @@ export default function BecomeAnAgentPage() {
     role: 'agent',
     numberOfAgents: '',
     agencyType: '',
+    ticoOrIataCertified: '', // Added
+    planPurchased: [], // Added
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Use the login function from AuthContext
+  const { login } = useAuth();
 
   // Handle form input changes
   const handleChange = (
@@ -88,11 +96,16 @@ export default function BecomeAnAgentPage() {
       // Send POST request to the backend API
       const response = await axios.post('/api/auth/becomeanagent', formData);
 
-      // If successful, show success notification and redirect to login page
+      // If successful, show success notification and log the user in
       if (response.status === 201) {
-        toast.success('Agent registration successful! Redirecting to login...');
+        const { token, user } = response.data;
+
+        // Call the login function from AuthContext
+        login(user.role, token);
+
+        toast.success('Agent registration successful! Redirecting to dashboard...');
         setTimeout(() => {
-          router.push('/login');
+          router.push(user.role === 'agent' ? '/agent' : '/dashboard');
         }, 2000); // Redirect after 2 seconds
       }
     } catch (err: unknown) {
@@ -349,6 +362,20 @@ export default function BecomeAnAgentPage() {
                     onChange={handleChange}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={isLoading}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="ticoOrIataCertified" className="block text-sm font-medium text-gray-700">
+                    TICO/IATA Certified
+                  </label>
+                  <input
+                    type="text"
+                    id="ticoOrIataCertified"
+                    name="ticoOrIataCertified"
+                    value={formData.ticoOrIataCertified}
+                    onChange={handleChange}
+                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     disabled={isLoading}
                   />
                 </div>

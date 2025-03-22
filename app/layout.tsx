@@ -8,7 +8,7 @@ import Footer from "@/components/Home/Footer/Footer";
 import ScrollToTop from "@/components/Helper/ScrollToTop";
 import { SidebarProvider } from "./context/SidebarContext";
 import { Toaster } from "react-hot-toast";
-// import { metadata } from "./metadata"; // Import metadata
+import { AuthProvider } from "./context/AuthContext"; // Import AuthProvider
 
 const font = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -26,11 +26,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${font.className} antialiased`}>
-        {!isAgentPage && <ResponsiveNav />}
-        <SidebarProvider>{children}</SidebarProvider>
-        {!isAgentPage && <Footer />}
-        <Toaster position="top-center" reverseOrder={false} />
-        <ScrollToTop />
+        {/* Wrap the entire application with AuthProvider */}
+        <AuthProvider>
+          {!isAgentPage && <ResponsiveNav />}
+          <SidebarProvider>{children}</SidebarProvider>
+          {!isAgentPage && <Footer />}
+          <Toaster position="top-center" reverseOrder={false} />
+          <ScrollToTop />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -687,58 +687,66 @@ export const toursData = [
 export const reviewData = [
   {
     id: 1,
-    name: "John Doe",
+    name: "John Carter",
     review:
-      "The service exceeded my expectations. The team was professional, and I couldn't be happier with the results. Highly recommended to everyone!",
+      "The trip was absolutely amazing! The travel team planned everything perfectly, and I had the best vacation of my life. Highly recommended!",
     image: "/images/u1.jpg",
+    profession: "Toronto, Canada",
   },
   {
     id: 2,
-    name: "Jane Smith",
+    name: "Jane Miller",
     review:
-      "I am thoroughly impressed with the attention to detail and quality. They truly understand customer needs and deliver outstanding results. Wonderful experience!",
+      "I couldn't have asked for a better experience. The itinerary was well-organized, and the guides were so knowledgeable. Truly unforgettable!",
     image: "/images/u2.jpg",
+    profession: "New York, USA",
   },
   {
     id: 3,
-    name: "Michael Brown",
+    name: "Michael Taylor",
     review:
-      "Exceptional quality and fantastic customer service! The project was delivered on time and exactly as I wanted. I will definitely use their services again.",
+      "From booking to the trip itself, everything was seamless. The destinations were breathtaking, and the accommodations were top-notch. Will travel with them again!",
     image: "/images/u3.jpg",
+    profession: "Vancouver, Canada",
   },
   {
     id: 4,
-    name: "Emily Davis",
+    name: "Emily Clark",
     review:
-      "Outstanding results! The team was efficient, and their professionalism was remarkable. Everything was done perfectly. I highly recommend their expertise to everyone.",
+      "This was my first international trip, and it was flawless! The team took care of every detail, and I felt safe and well-guided throughout. Thank you!",
     image: "/images/u1.jpg",
+    profession: "Los Angeles, USA",
   },
   {
     id: 5,
-    name: "Chris Wilson",
+    name: "Chris Evans",
     review:
-      "Amazing service! They exceeded all expectations and delivered a product that I am extremely happy with. The communication throughout the project was excellent.",
+      "The travel agency made my dream vacation a reality. The tours were incredible, and the local experiences were so authentic. I’m already planning my next trip!",
     image: "/images/u2.jpg",
+    profession: "Montreal, Canada",
   },
   {
     id: 6,
-    name: "Sarah Johnson",
+    name: "Sarah Brown",
     review:
-      "Fantastic experience! They listened carefully to my requirements and delivered exactly what I needed. Their attention to detail is truly commendable.",
+      "I had an amazing time exploring new cultures and destinations. The team was so helpful and made sure everything went smoothly. Highly recommend!",
     image: "/images/u3.jpg",
+    profession: "Chicago, USA",
   },
   {
     id: 7,
-    name: "David Lee",
+    name: "David Wilson",
     review:
-      "Absolutely incredible service! The team was supportive and responsive, making sure everything was perfect. I will definitely recommend them to my friends.",
+      "The trip was well-organized, and the guides were fantastic. I loved every moment of it and can’t wait to travel with them again. Truly exceptional service!",
     image: "/images/u1.jpg",
+    profession: "Calgary, Canada",
   },
   {
     id: 8,
-    name: "Sophia White",
+    name: "Sophia Garcia",
     review:
-      "Five-star service from start to finish! The dedication and skill of the team made all the difference. Truly an exceptional experience I won’t forget.",
+      "Everything was perfect! The destinations were stunning, and the team made sure we had the best experience. I’ll cherish these memories forever.",
     image: "/images/u2.jpg",
+    profession: "Miami, USA",
   },
 ];

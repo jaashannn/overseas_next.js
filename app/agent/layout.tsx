@@ -3,25 +3,24 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useSidebar } from '@/app/context/SidebarContext'; // Import the SidebarContext
+import { useAuth } from '@/app/context/AuthContext'; // Import the AuthContext
 import AgentSidebar from '@/components/Helper/AgentSidebar';
 import AgentNavbar from '@/components/Helper/AgentNavbar';
 
 export default function AgentLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const { isLoggedIn, userRole } = useAuth(); // Use the AuthContext
   const { isCollapsed } = useSidebar(); // Get the collapsed state from SidebarContext
 
   useEffect(() => {
-    // Check if the user is logged in and has the 'agent' role
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    const role = localStorage.getItem('role');
-
-    if (!isLoggedIn || !role ) {
-      router.push('/login'); // Redirect to login if not authenticated or not an agent
+    // Check if the user is logged in and has the 'agent' or 'admin' role
+    if (!isLoggedIn || (userRole !== 'agent' && userRole !== 'admin')) {
+      router.push('/login'); // Redirect to login if not authenticated or not an agent/admin
     } else {
       setIsLoading(false); // Stop loading once authentication state is confirmed
     }
-  }, [router]);
+  }, [isLoggedIn, userRole, router]);
 
   if (isLoading) {
     return (

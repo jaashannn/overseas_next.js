@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import dbConnect from '../../../lib/mongodb';
 import Agent from '../../../models/Agent'; // Ensure this model exists
 import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
+import { sendEmail } from '../../../lib/mailer'; // Import the mailer utility
 
 export async function POST(request) {
   await dbConnect();
@@ -24,8 +25,8 @@ export async function POST(request) {
     role,
     numberOfAgents,
     agencyType,
+    ticoOrIataCertified
   } = await request.json();
-
 
   try {
     // Check if agent already exists
@@ -57,9 +58,21 @@ export async function POST(request) {
       role,
       numberOfAgents,
       agencyType,
+      ticoOrIataCertified
     });
 
     await agent.save();
+
+    // Send email to the user
+    const userSubject = 'Thank you for signing up as an agent!';
+    const userText = `Dear ${name},\n\nThank you for signing up as an agent with us. We will review your application and get back to you shortly.\n\nBest regards,\nYour Company`;
+    await sendEmail(email, userSubject, userText);
+
+    // Send email to the admin
+    const adminEmail = process.env.ADMIN_EMAIL; // Admin email address
+    const adminSubject = 'New Agent Signup';
+    const adminText = `A new agent has signed up:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phoneNumber}\nCountry: ${country}\nAgency Type: ${agencyType}`;
+    await sendEmail(adminEmail, adminSubject, adminText);
 
     // Respond with success
     return NextResponse.json({ message: 'Agent created successfully', agent }, { status: 201 });
@@ -75,13 +88,51 @@ export async function GET() {
     // Connect to the database
     await dbConnect();
 
-    // Fetch all agents from the database
-    const agents = await Agent.find({});
+    // Fetch all agents with the role of 'agent'
+    const agents = await Agent.find({ role: 'agent' });
 
-    // Return the agents as a response
+    // Return the filtered agents as a response
     return NextResponse.json({ agents }, { status: 200 });
   } catch (error) {
     console.error('Error fetching agents:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
+
+
+
+export async function DELETE(request) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ message: 'Agent ID is required' }, { status: 400 });
+    }
+
+    await Agent.findByIdAndDelete(id);
+    return NextResponse.json({ message: 'Agent deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting agent:', error);
+    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ message: 'Agent ID is required' }, { status: 400 });
+    }
+
+    const agent = await Agent.findByIdAndUpdate(id, { verified: true }, { new: true });
+    return NextResponse.json({ agent }, { status: 200 });
+  } catch (error) {
+    console.error('Error verifying agent:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
   }
 }

@@ -1,22 +1,26 @@
 'use client'; // Mark this as a Client Component
 import axios from 'axios';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
+import { useAuth } from '@/app/context/AuthContext'; // Import useAuth
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  // Use the login and logout functions from AuthContext
+  const { isLoggedIn, login, logout } = useAuth();
 
   useEffect(() => {
-    // Check if the user is already logged in
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    setIsLoggedIn(loggedIn);
-  }, []);
+    // If the user is already logged in, redirect them based on their role
+    if (isLoggedIn) {
+      const role = localStorage.getItem('role');
+      router.push(role === 'agent' ? '/agent' : role === 'admin' ? '/admin' : '/dashboard');
+    }
+  }, [isLoggedIn, router]);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,37 +33,32 @@ export default function LoginPage() {
         password,
       });
 
-      // If successful, store the token and user role in localStorage
+      // If successful, update the global state using the login function
       if (response.status === 200) {
         const { token, user } = response.data;
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('token', token);
-        localStorage.setItem('role', user.role);
-        setIsLoggedIn(true);
+
+        // Call the login function from AuthContext
+        login(user.role, token);
 
         toast.success('Login successful!');
 
         // Redirect based on role
-        router.push(user.role === 'agent' ? '/agent' : user.role === 'admin' ? '/admin' : '/dashboard');
+        router.push(user.role === 'agent' ? '/agent' : user.role === 'admin' ? '/admin' : '/');
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         // Axios error handling
         toast.error(err.response?.data?.message || 'An error occurred. Please try again.');
       }
-    }finally {
+    } finally {
       setIsLoading(false);
     }
   };
 
   const handleLogout = () => {
-    // Clear session
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    setIsLoggedIn(false);
+    // Call the logout function from AuthContext
+    logout();
     router.push('/login');
-
     toast.success('Logged out successfully!');
   };
 
@@ -144,16 +143,6 @@ export default function LoginPage() {
               </button>
             </div>
           </form>
-        )}
-        {!isLoggedIn && (
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/signup" className="text-blue-600 hover:underline">
-                Sign up
-              </Link>
-            </p>
-          </div>
         )}
       </div>
     </div>

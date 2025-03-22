@@ -1,47 +1,70 @@
-// 'use client';
+"use client";
 
-// import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-// type AuthContextType = {
-//   isLoggedIn: boolean;
-//   login: () => void;
-//   logout: () => void;
-// };
+interface AuthContextType {
+  isLoggedIn: boolean;
+  userRole: string;
+  token: string | null;
+  login: (role: string, token: string) => void;
+  logout: () => void;
+  isLoading: boolean; // Add isLoading to the context
+}
 
-// const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// export function AuthProvider({ children }: { children: React.ReactNode }) {
-//   const [isLoggedIn, setIsLoggedIn] = useState(false);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
-//   // Check localStorage for authentication state on initial load
-//   useEffect(() => {
-//     const storedAuth = localStorage.getItem('isLoggedIn');
-//     if (storedAuth === 'true') {
-//       setIsLoggedIn(true);
-//     }
-//   }, []);
+  // Check localStorage on initial load
+  useEffect(() => {
+    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const role = localStorage.getItem("role") || "";
+    const storedToken = localStorage.getItem("token");
 
-//   const login = () => {
-//     setIsLoggedIn(true);
-//     localStorage.setItem('isLoggedIn', 'true'); // Store in localStorage
-//   };
+    if (loggedIn && role && storedToken) {
+      setIsLoggedIn(true);
+      setUserRole(role);
+      setToken(storedToken);
+    }
 
-//   const logout = () => {
-//     setIsLoggedIn(false);
-//     localStorage.removeItem('isLoggedIn'); // Remove from localStorage
-//   };
+    setIsLoading(false); // Mark loading as complete
+  }, []);
 
-//   return (
-//     <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// }
+  // Login function
+  const login = (role: string, token: string) => {
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("role", role);
+    localStorage.setItem("token", token);
+    setIsLoggedIn(true);
+    setUserRole(role);
+    setToken(token);
+  };
 
-// export function useAuth() {
-//   const context = useContext(AuthContext);
-//   if (!context) {
-//     throw new Error('useAuth must be used within an AuthProvider');
-//   }
-//   return context;
-// }
+  // Logout function
+  const logout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("role");
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUserRole("");
+    setToken(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, userRole, token, login, logout, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HiUserCircle, HiLogout } from "react-icons/hi";
 import { useSidebar } from "@/app/context/SidebarContext";
+import { useAuth } from "@/app/context/AuthContext"; // Import useAuth
 import Logo from "@/public/image.png";
 import { useRouter } from "next/navigation"; // Import useRouter for redirection
 import toast, { Toaster } from "react-hot-toast";
@@ -13,6 +14,7 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
   const [isLoggingOut, setIsLoggingOut] = useState<boolean>(false);
   const { isCollapsed } = useSidebar();
+  const { logout } = useAuth(); // Use logout function from AuthContext
   const router = useRouter(); // Initialize useRouter
 
   // Handle logout functionality
@@ -20,13 +22,8 @@ export default function Navbar() {
     setIsLoggingOut(true);
 
     try {
-      // Simulate logout API call (if needed)
-      // await axios.post("/api/auth/logout");
-
-      // Clear authentication state
-      localStorage.removeItem("isLoggedIn");
-      localStorage.removeItem("token");
-      localStorage.removeItem("role");
+      // Call the logout function from AuthContext
+      logout();
 
       // Show success notification
       toast.success("Logged out successfully!");

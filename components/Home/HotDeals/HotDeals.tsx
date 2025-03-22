@@ -12,19 +12,19 @@ const HotDeals = () => {
   // Fetch hot deals from the backend
   useEffect(() => {
     const fetchHotDeals = async () => {
-        try {
-          const response = await fetch("/api/auth/hotdeals");
-          if (!response.ok) {
-            const errorData = await response.text(); // Log the error response
-            console.error("Error fetching hot deals:", errorData);
-            return;
-          }
-          const data = await response.json();
-          setHotDeals(data.hotDeals);
-        } catch (error) {
-          console.error("Error fetching hot deals:", error);
+      try {
+        const response = await fetch("/api/auth/hotdeals");
+        if (!response.ok) {
+          const errorData = await response.text(); // Log the error response
+          console.error("Error fetching hot deals:", errorData);
+          return;
         }
-      };
+        const data = await response.json();
+        setHotDeals(data.hotDeals);
+      } catch (error) {
+        console.error("Error fetching hot deals:", error);
+      }
+    };
 
     fetchHotDeals();
   }, []);
@@ -73,61 +73,63 @@ const HotDeals = () => {
         />
       </div>
 
-      {/* Table */}
+      {/* Table Container with Scrollbar */}
       <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
-        <table className="min-w-full">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                From
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                To
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Departure
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Return
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Class
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Price From
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Contact Us
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {filteredDeals.map((deal, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="px-6 py-4 text-sm text-gray-700">{deal.from}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">{deal.to}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {new Date(deal.departure).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  {new Date(deal.return).toLocaleDateString()}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">{deal.class}</td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  ${deal.priceFrom}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-700">
-                  <a
-                    href={`mailto:tickets@overseastravels.net`}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    Contact Us
-                  </a>
-                </td>
+        <div className="max-h-[500px] overflow-y-auto">
+          <table className="min-w-full">
+            <thead className="bg-gray-200 sticky top-0">
+              <tr>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  From
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  To
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Departure
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Return
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Class
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Price From
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                  Contact Us
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredDeals.map((deal, index) => (
+                <tr key={index} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm text-gray-700">{deal.from}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{deal.to}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    {new Date(deal.departure).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    {new Date(deal.return).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">{deal.class}</td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    ${deal.priceFrom}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    <a
+                      href="/booknow"
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      Contact Us
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
