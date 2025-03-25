@@ -447,11 +447,11 @@ export const studymaterialData = {
   title: "studymaterial",
   heading: "Studymaterial",
   consolidators: [
-    {
-      title: "AGENT TOOLKIT",
-      link: "",
-      site: "",
-    },
+    // {
+    //   title: "AGENT TOOLKIT",
+    //   link: "",
+    //   site: "",
+    // },
     {
       title: "Rocky Mountainer",
       link: "/consolidator/stydymaterial/studyrockymountaineer",

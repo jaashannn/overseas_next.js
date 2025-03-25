@@ -16,8 +16,13 @@ export async function POST(request) {
     const user = await Agent.findOne({ email });
 
     // If user is not found
+
+   
     if (!user) {
       return NextResponse.json({ message: 'User not found' }, { status: 400 });
+    }
+    if(user.verified === false){
+      return NextResponse.json({ message: 'You are not verified, Please wait.' }, { status: 400 });
     }
 
     // Verify password

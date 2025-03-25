@@ -12,7 +12,7 @@ export const navLinks = [
   {
     id: 3,
     url: "/insurance",
-    label: "insurance",
+    label: "Insurance",
   },
   {
     id: 4,

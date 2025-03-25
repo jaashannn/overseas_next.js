@@ -4,7 +4,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
-import { useAuth } from '@/app/context/AuthContext'; // Import useAuth
+import { useAuth } from '@/app/context/AuthContext';
 
 type FormData = {
   title: string;
@@ -24,8 +24,8 @@ type FormData = {
   role: string;
   numberOfAgents: string;
   agencyType: string;
-  ticoOrIataCertified: string; // Added
-  planPurchased: string[]; // Added
+  ticoOrIataCertified: string;
+  planPurchased: string[];
 };
 
 type ApiError = {
@@ -58,15 +58,13 @@ export default function BecomeAnAgentPage() {
     role: 'agent',
     numberOfAgents: '',
     agencyType: '',
-    ticoOrIataCertified: '', // Added
-    planPurchased: [], // Added
+    ticoOrIataCertified: '',
+    planPurchased: [],
   });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Use the login function from AuthContext
   const { login } = useAuth();
 
-  // Handle form input changes
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -77,50 +75,47 @@ export default function BecomeAnAgentPage() {
     });
   };
 
-  // Handle next step
   const handleNext = () => {
     setStep(step + 1);
   };
 
-  // Handle previous step
   const handlePrevious = () => {
     setStep(step - 1);
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
-      // Send POST request to the backend API
       const response = await axios.post('/api/auth/becomeanagent', formData);
-
-      // If successful, show success notification and log the user in
+      
+      console.log('Response:', response.data); // Add this for debugging
+  
       if (response.status === 201) {
         const { token, user } = response.data;
-
-        // Call the login function from AuthContext
+        
+        if (!token || !user) {
+          throw new Error('Missing token or user data in response');
+        }
+  
         login(user.role, token);
-
         toast.success('Agent registration successful! Redirecting to dashboard...');
         setTimeout(() => {
-          router.push(user.role === 'agent' ? '/agent' : '/dashboard');
-        }, 2000); // Redirect after 2 seconds
+          router.push('/login');
+        }, 2000);
       }
     } catch (err: unknown) {
-      // Handle errors and show error notification
+      console.error('Submission error:', err); // Add this for debugging
       if (isApiError(err)) {
         toast.error(err.response?.data?.message || 'An error occurred. Please try again.');
       } else {
-        toast.error('An unexpected error occurred. Please try again.');
+        toast.error(err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.');
       }
     } finally {
       setIsLoading(false);
     }
   };
-
-  // Type guard to check if the error is of type ApiError
   function isApiError(error: unknown): error is ApiError {
     return (error as ApiError).response !== undefined;
   }
@@ -129,11 +124,9 @@ export default function BecomeAnAgentPage() {
     <div className="min-h-screen bg-gradient-to-r from-black to-blue-950 pt-36">
       <Toaster position="top-center" reverseOrder={false} />
       <div className="container mx-auto p-4 flex flex-col lg:flex-row gap-8">
-        {/* Left Section: Form */}
         <div className="w-full lg:w-1/2 bg-white p-8 rounded-lg shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Become an Agent</h2>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Stage 1: Basic Info */}
             {step === 1 && (
               <>
                 <div>
@@ -227,7 +220,6 @@ export default function BecomeAnAgentPage() {
               </>
             )}
 
-            {/* Stage 2: Address Info */}
             {step === 2 && (
               <>
                 <div>
@@ -329,56 +321,65 @@ export default function BecomeAnAgentPage() {
               </>
             )}
 
-            {/* Stage 3: Certification Info */}
             {step === 3 && (
               <>
                 <div>
-                  <label htmlFor="certificateType" className="block text-sm font-medium text-gray-700">
-                    Certificate Type
+                  <label htmlFor="ticoOrIataCertified" className="block text-sm font-medium text-gray-700">
+                    Are you TICO/IATA Certified?
                   </label>
                   <select
-                    id="certificateType"
-                    name="certificateType"
-                    value={formData.certificateType}
-                    onChange={handleChange}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                    disabled={isLoading}
-                  >
-                    <option value="">Select Certificate Type</option>
-                    <option value="TICO">TICO</option>
-                    <option value="IATA">IATA</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="certificateNumber" className="block text-sm font-medium text-gray-700">
-                    Certificate Number
-                  </label>
-                  <input
-                    type="text"
-                    id="certificateNumber"
-                    name="certificateNumber"
-                    value={formData.certificateNumber}
-                    onChange={handleChange}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                    disabled={isLoading}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="ticoOrIataCertified" className="block text-sm font-medium text-gray-700">
-                    TICO/IATA Certified
-                  </label>
-                  <input
-                    type="text"
                     id="ticoOrIataCertified"
                     name="ticoOrIataCertified"
                     value={formData.ticoOrIataCertified}
                     onChange={handleChange}
                     className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
                     disabled={isLoading}
-                  />
+                  >
+                    <option value="">Select an option</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
                 </div>
+
+                {formData.ticoOrIataCertified === 'Yes' && (
+                  <>
+                    <div>
+                      <label htmlFor="certificateType" className="block text-sm font-medium text-gray-700">
+                        Certificate Type
+                      </label>
+                      <select
+                        id="certificateType"
+                        name="certificateType"
+                        value={formData.certificateType}
+                        onChange={handleChange}
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                        disabled={isLoading}
+                      >
+                        <option value="">Select Certificate Type</option>
+                        <option value="TICO">TICO</option>
+                        <option value="IATA">IATA</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label htmlFor="certificateNumber" className="block text-sm font-medium text-gray-700">
+                        Certificate Number
+                      </label>
+                      <input
+                        type="text"
+                        id="certificateNumber"
+                        name="certificateNumber"
+                        value={formData.certificateNumber}
+                        onChange={handleChange}
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div>
                   <label htmlFor="numberOfAgents" className="block text-sm font-medium text-gray-700">
                     Number of Agents
@@ -394,19 +395,23 @@ export default function BecomeAnAgentPage() {
                   />
                 </div>
                 <div>
-                  <label htmlFor="agencyType" className="block text-sm font-medium text-gray-700">
-                    Agency Type
-                  </label>
-                  <input
-                    type="text"
-                    id="agencyType"
-                    name="agencyType"
-                    value={formData.agencyType}
-                    onChange={handleChange}
-                    className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    disabled={isLoading}
-                  />
-                </div>
+                      <label htmlFor="agencyType" className="block text-sm font-medium text-gray-700">
+                        Agency Type
+                      </label>
+                      <select
+                        id="agencyType"
+                        name="agencyType"
+                        value={formData.agencyType}
+                        onChange={handleChange}
+                        className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                        disabled={isLoading}
+                      >
+                        <option value="">Select agencyType</option>
+                        <option value="TICO">HomeBase</option>
+                        <option value="IATA">Freelance</option>
+                      </select>
+                    </div>
                 <div className="flex justify-between">
                   <button
                     type="button"
@@ -428,7 +433,6 @@ export default function BecomeAnAgentPage() {
               </>
             )}
 
-            {/* Stage 4: Additional Info */}
             {step === 4 && (
               <>
                 <div>
@@ -488,9 +492,7 @@ export default function BecomeAnAgentPage() {
           </form>
         </div>
 
-        {/* Right Section: Content */}
         <div className="w-full lg:w-1/2 space-y-8">
-          {/* Banner */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h3 className="text-2xl font-bold mb-4">Become a Travel Agent</h3>
             <p className="mb-4">
@@ -506,7 +508,6 @@ export default function BecomeAnAgentPage() {
             </button>
           </div>
 
-          {/* How It Works */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h3 className="text-2xl font-bold mb-4">How It Works</h3>
             <div className="space-y-4">
@@ -540,11 +541,9 @@ export default function BecomeAnAgentPage() {
             </div>
           </div>
 
-          {/* Pricing */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h3 className="text-2xl font-bold mb-4">Plans & Pricing</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* Silver Plan */}
               <div className="p-4 border rounded-lg">
                 <h4 className="font-bold">Silver</h4>
                 <p className="text-sm text-gray-600">Beginner Plan</p>
@@ -561,7 +560,6 @@ export default function BecomeAnAgentPage() {
                   Choose Plan
                 </button>
               </div>
-              {/* Gold Plan */}
               <div className="p-4 border rounded-lg">
                 <h4 className="font-bold">Gold</h4>
                 <p className="text-sm text-gray-600">Starter Plan</p>
@@ -578,7 +576,6 @@ export default function BecomeAnAgentPage() {
                   Choose Plan
                 </button>
               </div>
-              {/* Platinum Plan */}
               <div className="p-4 border rounded-lg">
                 <h4 className="font-bold">Platinum</h4>
                 <p className="text-sm text-gray-600">Most Popular Plan</p>

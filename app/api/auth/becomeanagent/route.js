@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import dbConnect from '../../../lib/mongodb';
-import Agent from '../../../models/Agent'; // Ensure this model exists
-import bcrypt from 'bcryptjs'; // Import bcrypt for password hashing
-import { sendEmail } from '../../../lib/mailer'; // Import the mailer utility
+import Agent from '../../../models/Agent';
+import bcrypt from 'bcryptjs';
+import { sendEmail } from '../../../lib/mailer';
+import jwt from 'jsonwebtoken'; // Add jsonwebtoken package
 
 export async function POST(request) {
   await dbConnect();
@@ -12,7 +13,7 @@ export async function POST(request) {
     name,
     email,
     phoneNumber,
-    password, // Plain text password from the request
+    password,
     country,
     address,
     city,
@@ -36,8 +37,8 @@ export async function POST(request) {
     }
 
     // Hash the password before saving
-    const salt = await bcrypt.genSalt(10); // Generate a salt
-    const hashedPassword = await bcrypt.hash(password, salt); // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create a new agent with the hashed password
     const agent = new Agent({
@@ -45,7 +46,7 @@ export async function POST(request) {
       name,
       email,
       phoneNumber,
-      password: hashedPassword, // Store the hashed password
+      password: hashedPassword,
       country,
       address,
       city,
@@ -63,19 +64,41 @@ export async function POST(request) {
 
     await agent.save();
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: agent._id, email: agent.email, role: agent.role },
+      process.env.JWT_SECRET || 'your-secret-key', // Make sure to set this in your .env file
+      { expiresIn: '30d' } // Token expiration time
+    );
+
+    // Prepare user object for response
+    const user = {
+      id: agent._id,
+      email: agent.email,
+      role: agent.role,
+      name: agent.name
+    };
+
     // Send email to the user
     const userSubject = 'Thank you for signing up as an agent!';
-    const userText = `Dear ${name},\n\nThank you for signing up as an agent with us. We will review your application and get back to you shortly.\n\nBest regards,\nYour Company`;
+    const userText = `Dear ${name},\n\nThank you for signing up as an agent with us. We will review your application and get back to you shortly.\n\nBest regards,\nOverseas Travel`;
     await sendEmail(email, userSubject, userText);
 
     // Send email to the admin
-    const adminEmail = process.env.ADMIN_EMAIL; // Admin email address
+    const adminEmail = process.env.ADMIN_EMAIL;
     const adminSubject = 'New Agent Signup';
     const adminText = `A new agent has signed up:\n\nName: ${name}\nEmail: ${email}\nPhone: ${phoneNumber}\nCountry: ${country}\nAgency Type: ${agencyType}`;
     await sendEmail(adminEmail, adminSubject, adminText);
 
-    // Respond with success
-    return NextResponse.json({ message: 'Agent created successfully', agent }, { status: 201 });
+    // Respond with success, including token and user data
+    return NextResponse.json(
+      { 
+        message: 'Agent created successfully', 
+        token, 
+        user 
+      }, 
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error in POST function:', error);
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
